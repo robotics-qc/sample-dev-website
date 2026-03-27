@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DragonWing Developer Docs</title>
+  <link rel="stylesheet" href="assets/css/docs.css">
+</head>
+<body>
+
+<!-- Top Nav -->
+<nav class="topnav">
+  <a class="topnav-brand" href="index.html">
+    <img class="topnav-logo" src="old_website_pages/Qualcomm-Dragonwing-logo.jpeg" alt="Qualcomm Dragonwing">
+  </a>
+  <button class="topnav-hamburger" id="hamburger">☰</button>
+</nav>
+
+<div class="page-layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <!-- Main -->
+  <div class="main-wrap">
+    <main class="main-content">
+
+      <div class="home-hero">
+        <div class="chip">Developer Documentation</div>
+        <h1>Qualcomm Dragonwing™<br><em>Developer Docs</em></h1>
+        <p class="page-subtitle">
+          Setup guides, hardware references, and SDK resources for the Qualcomm DragonWing evaluation kit family.
+        </p>
+      </div>
+
+      <hr class="divider" style="margin-top: 0;">
+
+      <h3>Evaluation Kits</h3>
+      <p>Select a kit to view its documentation.</p>
+
+      <div class="kit-grid">
+
+                <!-- Arduino Ventuno Q -->
+        <div class="kit-card disabled">
+          <img class="kit-card-img" src="old_website_pages/ventunoQ.jpeg" alt="IQ-9075 EVK box">
+          <div class="kit-card-header">
+            <div>
+              <div class="kit-name">Ventuno Q</div>
+              <div class="kit-title">Arduino<br>Ventuno Q</div>
+            </div>
+            <span class="kit-arrow">→</span>
+          </div>
+          <p class="kit-desc">
+            Documentation coming soon.
+          </p>
+          <div class="kit-tags">
+            <span class="kit-tag">Hardware</span>
+            <span class="kit-tag">Flashing</span>
+            <span class="kit-tag">SDK</span>
+          </div>
+        </div>
+
+
+        <!-- IQ-9075 -->
+        <a class="kit-card" href="iq9/index.html">
+          <img class="kit-card-img" src="old_website_pages/9075-EVK-Box.jpg" alt="IQ-9075 EVK box">
+          <div class="kit-card-header">
+            <div>
+              <div class="kit-name">IQ-9075</div>
+              <div class="kit-title">Qualcomm Dragonwing™<br>IQ-9075 EVK</div>
+            </div>
+            <span class="kit-arrow">→</span>
+          </div>
+          <p class="kit-desc">
+            Industrial-grade evaluation platform built on the IQ-9075 SoC. Octa-core CPU, Hexagon DSP NPU, Wi-Fi 6E, and a broad set of industrial interfaces.
+          </p>
+          <div class="kit-tags">
+            <span class="kit-tag active">Hardware</span>
+            <span class="kit-tag active">Flashing</span>
+            <span class="kit-tag">SDK</span>
+          </div>
+        </a>
+
+        <!-- IQ-10 -->
+        <div class="kit-card disabled">
+          <div class="kit-card-header">
+            <div>
+              <div class="kit-name">IQ-10</div>
+              <div class="kit-title">Qualcomm Dragonwing™<br>IQ-10 EVK</div>
+            </div>
+            <span class="kit-arrow">→</span>
+          </div>
+          <p class="kit-desc">
+            Documentation coming soon.
+          </p>
+          <div class="kit-tags">
+            <span class="kit-tag">Hardware</span>
+            <span class="kit-tag">Flashing</span>
+            <span class="kit-tag">SDK</span>
+          </div>
+        </div>
+        
+
+
+      </div>
+
+      <div class="bottom-nav">
+        <span class="bottom-nav-spacer"></span>
+        <a class="bottom-nav-link scroll-top" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Top</a>
+        <a class="bottom-nav-link next" href="iq9/index.html"><span class="nav-label">IQ-9075</span> →</a>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>Qualcomm Dragonwing™ Developer Documentation</p>
+</footer>
+
+<script>
+  window.DOCS_ROOT    = '.';
+  window.DOCS_NAV_KEY = 'home';
+</script>
+<script src="assets/js/nav.js"></script>
+</body>
+</html>

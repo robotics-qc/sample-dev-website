@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashing — IQ-9075 EVK</title>
+  <link rel="stylesheet" href="../../assets/css/docs.css">
+</head>
+<body>
+
+<!-- Top Nav -->
+<nav class="topnav">
+  <a class="topnav-brand" href="../../index.html">
+    <img class="topnav-logo" src="../../old_website_pages/Qualcomm-Dragonwing-logo.jpeg" alt="Qualcomm Dragonwing">
+  </a>
+  <div class="topnav-sep"></div>
+  <div class="topnav-breadcrumb">
+    <a href="../../index.html">Home</a>
+    <span class="crumb-sep">/</span>
+    <a href="../index.html">IQ-9075</a>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Flashing</span>
+  </div>
+  <button class="topnav-hamburger" id="hamburger">☰</button>
+</nav>
+
+<div class="page-layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <!-- Main -->
+  <div class="main-wrap">
+    <main class="main-content">
+
+      <a class="back-btn" href="../index.html"><span class="back-arrow">←</span> Back to IQ-9075</a>
+
+      <div class="page-header">
+        <div class="chip">IQ-9075 EVK</div>
+        <h1>Flashing <em>Software Images</em></h1>
+        <p class="page-subtitle">
+          Flash an OS image onto your IQ-9075 EVK using the QDL flashing tool. Choose a target OS below — flash steps may vary between OS options.
+        </p>
+      </div>
+
+      <div class="callout info">
+        <span class="callout-icon">ℹ</span>
+        <span>
+          The IQ-9075 EVK ships with a <strong>pre-installed Qualcomm Linux image</strong>. To run Ubuntu or another OS, you must flash a new image. Flashing requires putting the board into EDL mode — instructions are included in each guide.
+        </span>
+      </div>
+
+      <h3>Select Target OS</h3>
+
+      <div class="os-grid">
+
+        <a class="os-card" href="ubuntu.html">
+          <div class="os-card-icon">🐧</div>
+          <div class="os-card-name">Ubuntu 24.04 LTS</div>
+          <p class="os-card-detail">SERVER &amp; DESKTOP VARIANTS</p>
+        </a>
+
+        <div class="os-card disabled">
+          <div class="os-card-icon">🔧</div>
+          <div class="os-card-name">QLI 1.x</div>
+          <p class="os-card-detail">COMING SOON</p>
+        </div>
+
+        <div class="os-card disabled">
+          <div class="os-card-icon">🔧</div>
+          <div class="os-card-name">QLI 2.x</div>
+          <p class="os-card-detail">COMING SOON</p>
+        </div>
+
+      </div>
+
+      <div class="bottom-nav">
+        <a class="bottom-nav-link prev" href="../hardware.html">← <span class="nav-label">Hardware</span></a>
+        <a class="bottom-nav-link scroll-top" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Top</a>
+        <a class="bottom-nav-link next" href="ubuntu.html"><span class="nav-label">Ubuntu 24.04</span> →</a>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>Qualcomm Dragonwing™ Developer Documentation &nbsp;·&nbsp; IQ-9075 / Flashing</p>
+</footer>
+
+<script>
+  window.DOCS_ROOT    = '../..';
+  window.DOCS_NAV_KEY = 'iq9-flashing';
+</script>
+<script src="../../assets/js/nav.js"></script>
+</body>
+</html>

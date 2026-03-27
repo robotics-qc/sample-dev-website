@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hardware — IQ-9075 EVK</title>
+  <link rel="stylesheet" href="../assets/css/docs.css">
+</head>
+<body>
+
+<!-- Top Nav -->
+<nav class="topnav">
+  <a class="topnav-brand" href="../index.html">
+    <img class="topnav-logo" src="../old_website_pages/Qualcomm-Dragonwing-logo.jpeg" alt="Qualcomm Dragonwing">
+  </a>
+  <div class="topnav-sep"></div>
+  <div class="topnav-breadcrumb">
+    <a href="../index.html">Home</a>
+    <span class="crumb-sep">/</span>
+    <a href="index.html">IQ-9075</a>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Hardware</span>
+  </div>
+  <button class="topnav-hamburger" id="hamburger">☰</button>
+</nav>
+
+<div class="page-layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <!-- Main + Right TOC -->
+  <div class="main-wrap">
+    <main class="main-content">
+
+      <a class="back-btn" href="index.html"><span class="back-arrow">←</span> Back to IQ-9075</a>
+
+      <div class="page-header">
+        <div class="chip">IQ-9075 EVK</div>
+        <h1>Hardware <em>Overview</em></h1>
+        <p class="page-subtitle">
+          Board layout, included accessories, connector map, and key hardware reference for the Qualcomm Dragonwing IQ-9075 EVK.
+        </p>
+      </div>
+
+      <!-- TOC -->
+      <div class="inline-toc">
+        <div class="inline-toc-title">On This Page</div>
+        <ol>
+          <li><a href="#in-the-box">In the Box</a></li>
+          <li><a href="#board-layout">Board Layout</a></li>
+          <li><a href="#block-diagram">Block Diagram</a></li>
+          <li><a href="#dip-switches">DIP Switches</a></li>
+          <li><a href="#power">Power Requirements</a></li>
+        </ol>
+      </div>
+
+      <!-- ── In the Box ── -->
+      <details class="collapsible-section" id="in-the-box" open>
+        <summary>
+          <span class="section-num">01</span>
+          <h2>In the Box</h2>
+          <span class="collapse-arrow">&#9654;</span>
+        </summary>
+        <div class="section-body">
+
+          <figure class="doc-image">
+            <img src="../old_website_pages/IQ9-with-all-included-accesseories-in-box.png"
+                 alt="IQ-9075 EVK with all included accessories">
+            <figcaption>Fig 1 — IQ-9075 EVK with included accessories</figcaption>
+          </figure>
+
+        </div>
+      </details>
+
+      <!-- ── Board Layout ── -->
+      <details class="collapsible-section" id="board-layout" open>
+        <summary>
+          <span class="section-num">02</span>
+          <h2>Board Layout</h2>
+          <span class="collapse-arrow">&#9654;</span>
+        </summary>
+        <div class="section-body">
+
+          <p>
+            The labeled diagram below identifies key components and connectors on the IQ-9075 EVK board.
+          </p>
+
+          <figure class="doc-image">
+            <img src="../old_website_pages/IQ9-detailed-labeled.svg"
+                 alt="IQ-9075 EVK board with labeled components">
+            <figcaption>Fig 2 — IQ-9075 EVK top-side component layout</figcaption>
+          </figure>
+
+        </div>
+      </details>
+
+      <!-- ── Block Diagram ── -->
+      <details class="collapsible-section" id="block-diagram" open>
+        <summary>
+          <span class="section-num">03</span>
+          <h2>Block Diagram</h2>
+          <span class="collapse-arrow">&#9654;</span>
+        </summary>
+        <div class="section-body">
+
+          <p>High-level block diagram of the IQ-9075 EVK showing the SoC, memory, storage, connectivity, and peripheral subsystems.</p>
+
+          <figure class="doc-image">
+            <img src="../old_website_pages/iq-9075-design-chart.jpeg"
+                 alt="IQ-9075 EVK block diagram">
+            <figcaption>Fig 3 — IQ-9075 EVK block diagram</figcaption>
+          </figure>
+
+        </div>
+      </details>
+
+      <!-- ── DIP Switches ── -->
+      <details class="collapsible-section" id="dip-switches" open>
+        <summary>
+          <span class="section-num">04</span>
+          <h2>DIP Switches</h2>
+          <span class="collapse-arrow">&#9654;</span>
+        </summary>
+        <div class="section-body">
+
+          <p>
+            The <strong>SW2</strong> bank of DIP switches controls the boot mode of the board. Switch <strong>SW2-3</strong> is used to enter EDL (Emergency Download) mode for flashing.
+          </p>
+
+
+
+          <table class="doc-table">
+            <thead>
+              <tr><th>Switch</th><th>Position</th><th>State</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>SW2-3</td><td>UP (ON)</td><td>EDL mode enabled — board enters QDL for flashing</td></tr>
+              <tr><td>SW2-3</td><td>DOWN (OFF)</td><td>Normal boot from UFS storage</td></tr>
+            </tbody>
+          </table>
+
+          <figure class="doc-image">
+            <img src="../old_website_pages/EDL_switch_position.png"
+                 alt="EDL DIP switch position on the IQ-9075 EVK">
+            <figcaption>Fig 4 — SW2-3 DIP switch location and position for EDL mode</figcaption>
+          </figure>
+
+        </div>
+      </details>
+
+      <!-- ── Power ── -->
+      <details class="collapsible-section" id="power" open>
+        <summary>
+          <span class="section-num">05</span>
+          <h2>Power Requirements</h2>
+          <span class="collapse-arrow">&#9654;</span>
+        </summary>
+        <div class="section-body">
+
+          <table class="doc-table">
+            <thead>
+              <tr><th>Parameter</th><th>Value</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Input Voltage</td><td>12 V DC</td></tr>
+              <tr><td>Connector</td><td>5.5 mm / 2.5 mm barrel jack</td></tr>
+              <tr><td>Polarity</td><td>Center positive</td></tr>
+              <tr><td>Recommended Supply</td><td>Included 12 V adapter</td></tr>
+            </tbody>
+          </table>
+
+          <div class="callout info">
+            <span class="callout-icon">ℹ</span>
+            <span>
+              Always connect the 12 V power supply before connecting the USB cables. The board will not enter EDL mode reliably if powered only via USB.
+            </span>
+          </div>
+
+        </div>
+      </details>
+
+      <div class="bottom-nav">
+        <a class="bottom-nav-link prev" href="index.html">← <span class="nav-label">IQ-9075</span></a>
+        <a class="bottom-nav-link scroll-top" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Top</a>
+        <a class="bottom-nav-link next" href="flashing/index.html"><span class="nav-label">Flashing</span> →</a>
+      </div>
+
+    </main>
+
+    <!-- Right TOC -->
+    <aside class="page-toc">
+      <div class="page-toc-label">On This Page</div>
+      <ul class="page-toc-list">
+        <li><a href="#in-the-box">In the Box</a></li>
+        <li><a href="#board-layout">Board Layout</a></li>
+        <li><a href="#block-diagram">Block Diagram</a></li>
+        <li><a href="#dip-switches">DIP Switches</a></li>
+        <li><a href="#power">Power</a></li>
+      </ul>
+    </aside>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>Qualcomm Dragonwing™ Developer Documentation &nbsp;·&nbsp; IQ-9075 / Hardware</p>
+</footer>
+
+<script>
+  window.DOCS_ROOT    = '..';
+  window.DOCS_NAV_KEY = 'iq9-hardware';
+</script>
+<script src="../assets/js/nav.js"></script>
+</body>
+</html>

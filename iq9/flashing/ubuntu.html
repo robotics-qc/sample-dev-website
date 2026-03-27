@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flash Ubuntu 24.04 — IQ-9075 EVK</title>
+  <link rel="stylesheet" href="../../assets/css/docs.css">
+</head>
+<body>
+
+<!-- Top Nav -->
+<nav class="topnav">
+  <a class="topnav-brand" href="../../index.html">
+    <img class="topnav-logo" src="../../old_website_pages/Qualcomm-Dragonwing-logo.jpeg" alt="Qualcomm Dragonwing">
+  </a>
+  <div class="topnav-sep"></div>
+  <div class="topnav-breadcrumb">
+    <a href="../../index.html">Home</a>
+    <span class="crumb-sep">/</span>
+    <a href="../index.html">IQ-9075</a>
+    <span class="crumb-sep">/</span>
+    <a href="index.html">Flashing</a>
+    <span class="crumb-sep">/</span>
+    <span class="crumb-current">Ubuntu 24.04</span>
+  </div>
+  <button class="topnav-hamburger" id="hamburger">☰</button>
+</nav>
+
+<div class="page-layout">
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <div class="main-wrap">
+    <main class="main-content">
+
+      <a class="back-btn" href="index.html"><span class="back-arrow">←</span> Back to Flashing</a>
+
+      <!-- Page Header -->
+      <div class="page-header">
+        <div class="chip">Flashing Guide</div>
+        <h1>Flash Ubuntu 24.04 onto the <em>IQ-9075 EVK</em></h1>
+        <p class="page-subtitle">
+          Complete guide to flashing Ubuntu 24.04 LTS (Server or Desktop) onto the Qualcomm Dragonwing IQ-9075 EVK using the QDL tool.
+        </p>
+        <div class="meta-row">
+          <div class="meta-item">
+            <span class="meta-label">Target OS</span>
+            <span class="meta-value">Ubuntu 24.04 LTS</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Board</span>
+            <span class="meta-value">IQ-9075 EVK</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Doc Rev</span>
+            <span class="meta-value">80-90441-252 AW</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Updated</span>
+            <span class="meta-value">Feb 2026</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overview TOC -->
+          <div class="inline-toc" style="margin-top:28px;">
+            <div class="inline-toc-title">In this guide</div>
+            <ol>
+              <li><a href="#dl">Download files &amp; prepare image directory</a></li>
+              <li><a href="#verify">Verify hardware (optional)</a></li>
+              <li><a href="#edl">Put device into EDL mode</a></li>
+              <li><a href="#flash">Configure host &amp; flash</a></li>
+              <li><a href="#firstboot">First boot &amp; login</a></li>
+            </ol>
+          </div>
+
+          <!-- Prerequisites -->
+          <h3>What you need</h3>
+          <table class="doc-table">
+            <thead><tr><th>Item</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td>IQ-9075 EVK</td><td>Board to be flashed</td></tr>
+              <tr><td>12 V DC power supply</td><td>Power the board (included in box)</td></tr>
+              <tr><td>USB Type-C cable</td><td>Flash cable — connects to <strong>USB0</strong> port on the EVK</td></tr>
+              <tr><td>Micro-USB cable</td><td>Debug UART console (optional but recommended)</td></tr>
+              <tr><td>Ubuntu/Linux host</td><td>Machine running the QDL flashing tool</td></tr>
+            </tbody>
+          </table>
+
+          <!-- ── SECTION 1: Download ── -->
+          <details class="collapsible-section" id="dl" open>
+            <summary>
+              <span class="section-num">01</span>
+              <h2>Download Files &amp; Prepare Image Directory</h2>
+              <span class="collapse-arrow">&#9654;</span>
+            </summary>
+            <div class="section-body">
+
+              <p>Download all three components below, then assemble them into a single working directory.</p>
+
+              <!-- 1a Boot firmware -->
+              <h3>Boot Firmware (NHLOS binaries)</h3>
+              <p>Download the boot firmware archive from CodeLinaro:</p>
+              <a class="dl-link" href="https://artifacts.codelinaro.org/qli-ci/flashable-binaries/ubuntu-fw/QCS9100/QLI.1.6-Ver.1.1" target="_blank">
+                ↓ CodeLinaro — QLI.1.6-Ver.1.1 Boot Firmware
+              </a>
+              <p style="margin-top:8px;">Download <code>QLI.1.6-Ver.1.1-ubuntu-QCS9100-nhlos-bins.tar.gz</code>.</p>
+
+              <!-- 1b Ubuntu image -->
+              <h3>Ubuntu OS Image</h3>
+              <p>Download the Ubuntu image from Cannonical's website:</p>
+              <a class="dl-link" href="https://people.canonical.com/~platform/images/qualcomm-iot/ubuntu-24.04/ubuntu-24.04-x08/ubuntu-desktop-24.04" target="_blank">
+                ↓ Cannonical — Ubuntu 24.04 Desktop Image
+              </a>
+              <a class="dl-link" href="https://people.canonical.com/~platform/images/qualcomm-iot/ubuntu-24.04/ubuntu-24.04-x08/ubuntu-server-24.04" target="_blank">
+                ↓ Cannonical — Ubuntu 24.04 Server Image
+              </a>
+              
+              <p>Download <code>iot-qualcomm-dragonwing-classic-XX-XXXX.img.xz</code> , <code>dtb.bin</code> and <code>rawprogram0.xml</code> to your system.</p>
+              <div class="callout warn">
+                <span class="callout-icon">⚠</span>
+                <span>
+                  To download <code>rawprogram0.xml</code> — open file on browser & <strong>Right-click → Save As </strong> and save to location.
+                </span>
+              </div>
+
+              <!-- 1c QDL tool -->
+              <h3>QDL Flashing Tool</h3>
+              <p>Download the Qualcomm Device Loader (QDL) tool:</p>
+              <a class="dl-link" href="https://softwarecenter.qualcomm.com/catalog/item/Qualcomm_Device_Loader?osArch=X86&osDist=Debian&osType=Linux&version=2.3.9" target="_blank">
+                ↓ Qualcomm Software Center — QDL v2.3.9 (Linux x86)
+              </a>
+              <div class="callout info">
+                <span class="callout-icon">ℹ</span>
+                <span>If you already have QDL installed, you can use its path directly in the flash commands below — no need to re-download.</span>
+              </div>
+
+              <!-- 1d Organize files -->
+              <h3>Organize the Image Directory</h3>
+              <div class="steps">
+                <div class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Create the working directory</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>mkdir ~/iq9_ubuntu_images
+cd ~/iq9_ubuntu_images</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Extract and copy boot firmware</div>
+                    <p class="step-desc">Extract the NHLOS archive into <code>iq9_ubuntu_images</code>:</p>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>tar -xzf ~/Downloads/QLI.1.6-Ver.1.1-ubuntu-QCS9100-nhlos-bins.tar.gz -C ~/iq9_ubuntu_images</pre>
+                    </div>
+                    <div class="callout warn">
+                      <span class="callout-icon">⚠</span>
+                      <span>If a <code>patch0.xml</code> file was extracted from the firmware archive, <strong>delete it</strong> before continuing:
+                      <br><code>rm ~/iq9_ubuntu_images/patch0.xml</code></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Copy <code>dtb.bin</code> and <code>rawprogram0.xml</code></div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>cp ~/Downloads/dtb.bin ~/iq9_ubuntu_images/
+cp ~/Downloads/rawprogram0.xml ~/iq9_ubuntu_images/</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">4</div>
+                  <div class="step-body">
+                    <div class="step-title">Decompress the Ubuntu image</div>
+                    <p class="step-desc">This may take a few minutes. Choose your variant:</p>
+                    <h4>Server</h4>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>unxz ~/Downloads/iot-qualcomm-dragonwing-classic-server-2404-x08-20260210.4096b.img.xz
+cp ~/Downloads/iot-qualcomm-dragonwing-classic-server-2404-x08-20260210.4096b.img ~/iq9_ubuntu_images/</pre>
+                    </div>
+                    <h4>Desktop</h4>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>unxz ~/Downloads/iot-qualcomm-dragonwing-classic-desktop-2404-x08-20260210.4096b.img.xz
+cp ~/Downloads/iot-qualcomm-dragonwing-classic-desktop-2404-x08-20260210.4096b.img ~/iq9_ubuntu_images/</pre>
+                    </div>
+                    <div class="callout warn">
+                      <span class="callout-icon">⚠</span>
+                      <span>Make sure the image file name is updated to your latest downloaded version</span>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">5</div>
+                  <div class="step-body">
+                    <div class="step-title">Extract QDL into the same directory</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>cd ~/iq9_ubuntu_images
+unzip ~/Downloads/qdl-linux-x86-2.3.9.zip
+chmod +x qdl</pre>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- /steps -->
+
+              <h3>Expected directory contents</h3>
+              <p>Before flashing, <code>~/iq9_ubuntu_images/</code> should contain some key files : </p>
+              <table class="doc-table">
+                <thead><tr><th>File</th><th>Source</th></tr></thead>
+                <tbody>
+                  <tr><td><code>prog_firehose_ddr.elf</code></td><td>Image Programmer</td></tr>
+                  <tr><td><code>rawprogram*.xml</code></td><td>Boot firmware + Canonical</td></tr>
+                  <tr><td><code>patch*.xml</code></td><td>Boot firmware</td></tr>
+                  <tr><td><code>dtb.bin</code></td><td>Canonical</td></tr>
+                  <tr><td><code>iot-qualcomm-dragonwing-classic-[server|desktop]-XXXXXX.img</code></td><td>Canonical (decompressed)</td></tr>
+                  <tr><td><code>sail_nor/</code> (subdirectory)</td><td>Boot firmware</td></tr>
+                  <tr><td><code>qdl</code></td><td>QDL tool (if not using an existing QDL elsewhere)</td></tr>
+                </tbody>
+              </table>
+
+            </div>
+          </details>
+
+          <!-- ── SECTION 2: Verify hardware (optional) ── -->
+          <details class="collapsible-section" id="verify">
+            <summary>
+              <span class="section-num">02</span>
+              <h2>Verify Hardware is Working</h2>
+              <span class="section-badge">Optional</span>
+              <span class="collapse-arrow">&#9654;</span>
+            </summary>
+            <div class="section-body">
+
+              <p>
+                The IQ-9075 EVK ships with a pre-installed Qualcomm Linux image. Before flashing Ubuntu, you can verify the hardware is functional by observing the boot process over the debug UART. This step is optional — if you want to go straight to flashing, skip to <a href="#edl">Step 3</a>.
+              </p>
+
+              <div class="callout info">
+                <span class="callout-icon">ℹ</span>
+                <span>Do <strong>not</strong> log in to the console during this check — just observe the boot logs.</span>
+              </div>
+
+              <div class="steps">
+                <div class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Connect the cables</div>
+                    <p class="step-desc">
+                      Connect the <strong>Micro-USB cable</strong> to the <strong>Debug UART port</strong> on the EVK and to your host computer. Then plug in the <strong>12 V power supply</strong>.
+                    </p>
+                    <figure class="doc-image">
+                      <img src="../../old_website_pages/IQ9-with-power-debug-usb-labeled.png"
+                           alt="IQ-9075 EVK showing power and debug USB connection points">
+                      <figcaption>Power supply (barrel jack) and Debug UART (Micro-USB) connection points</figcaption>
+                    </figure>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Install a serial terminal</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>sudo apt update && sudo apt install -y screen picocom</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Identify the serial port</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>ls /dev/ttyUSB*</pre>
+                    </div>
+                    <p class="step-desc">Sample output: <code>/dev/ttyUSB0</code> or <code>/dev/ttyUSB1</code></p>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">4</div>
+                  <div class="step-body">
+                    <div class="step-title">Open the serial terminal</div>
+                    <p class="step-desc">Using <code>screen</code>:</p>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>sudo screen /dev/ttyUSB1 115200</pre>
+                    </div>
+                    <p class="step-desc">Or using <code>picocom</code>:</p>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>sudo picocom -b 115200 /dev/ttyUSB1</pre>
+                    </div>
+                    <div class="callout info">
+                      <span class="callout-icon">ℹ</span>
+                      <span>Adjust <code>/dev/ttyUSB1</code> to match the port from step 3. The debug UART port is typically /dev/ttyUSB1. Try all other ports if boot logs are not visible.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">5</div>
+                  <div class="step-body">
+                    <div class="step-title">Power the board and observe boot logs</div>
+                    <p class="step-desc">
+                      Plug in the 12 V power supply (if not already connected). You should see the Qualcomm Linux boot log scrolling in the terminal — kernel messages, service startup, and a login prompt. This confirms the board and UART connection are working correctly.
+                    </p>
+                    <p class="step-desc">
+                      Do <strong>not</strong> log in. Power off the board before proceeding to flashing.
+                    </p>
+                  </div>
+                </div>
+              </div><!-- /steps -->
+
+            </div>
+          </details>
+
+          <!-- ── SECTION 3: EDL Mode ── -->
+          <details class="collapsible-section" id="edl" open>
+            <summary>
+              <span class="section-num">03</span>
+              <h2>Put the Device into EDL Mode</h2>
+              <span class="collapse-arrow">&#9654;</span>
+            </summary>
+            <div class="section-body">
+
+              <p>EDL (Emergency Download) mode allows the QDL tool to write directly to the board's UFS storage.</p>
+
+              <div class="steps">
+                <div class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Power off the device</div>
+                    <p class="step-desc">Disconnect the 12 V power supply. Ensure the board is fully off before proceeding.</p>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Enable the SW2-3 DIP switch</div>
+                    <p class="step-desc">Push the <strong>SW2-3</strong> DIP switch to the <strong>UP (ON)</strong> position to enable EDL mode.</p>
+                    <figure class="doc-image">
+                      <img src="../../old_website_pages/EDL_switch_position.png"
+                           alt="SW2-3 DIP switch in the ON position for EDL mode">
+                      <figcaption>SW2-3 pushed UP — EDL mode enabled</figcaption>
+                    </figure>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Connect the 12 V power supply</div>
+                    <p class="step-desc">Plug the power supply back in to power the board on in EDL mode.</p>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">4</div>
+                  <div class="step-body">
+                    <div class="step-title">Connect USB Type-C to <strong>USB 0</strong></div>
+                    <p class="step-desc">Connect the USB Type-C flash cable from the EVK to the host computer.</p>
+                    <div class="callout danger">
+                      <span class="callout-icon">⚠</span>
+                      <span>
+                        <strong>Use the USB 0 port, not USB 1.</strong> Connecting to the wrong USB port will prevent the QDL tool from detecting the device.
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">5</div>
+                  <div class="step-body">
+                    <div class="step-title">Verify EDL mode on the host</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>lsusb</pre>
+                    </div>
+                    <p class="step-desc">You should see a Qualcomm QDL device:</p>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">expected output</span></div>
+                      <pre>Bus 002 Device 014: ID 05c6:9008 Qualcomm, Inc. Gobi Wireless Modem (QDL mode)</pre>
+                    </div>
+                    <p class="step-desc">If the device is not detected, try a different USB port on the host or check the SW2-3 switch position.</p>
+                  </div>
+                </div>
+              </div><!-- /steps -->
+
+            </div>
+          </details>
+
+          <!-- ── SECTION 4: Flash ── -->
+          <details class="collapsible-section" id="flash" open>
+            <summary>
+              <span class="section-num">04</span>
+              <h2>Configure Host &amp; Flash</h2>
+              <span class="collapse-arrow">&#9654;</span>
+            </summary>
+            <div class="section-body">
+
+              <!-- 4a udev -->
+              <h3>Set up udev rules (first time only)</h3>
+              <p>The host needs a udev rule so QDL can access the Qualcomm USB device without root privileges.</p>
+
+              <div class="steps">
+                <div class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Check if the rule already exists</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>ls /etc/udev/rules.d/ | grep qcom</pre>
+                    </div>
+                    <p class="step-desc">If <code>51-qcom-usb.rules</code> exists, skip to step 3 to verify its contents.</p>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Create the udev rule</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>echo 'SUBSYSTEMS=="usb", ATTRS{idVendor}=="05c6", ATTRS{idProduct}=="9008", MODE="0664", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/51-qcom-usb.rules</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Reload udev and reconnect</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>sudo systemctl restart udev</pre>
+                    </div>
+                    <p class="step-desc">Disconnect and reconnect the USB Type-C cable to apply the new rule.</p>
+                  </div>
+                </div>
+              </div><!-- /steps -->
+
+              <!-- 4b Flash commands -->
+              <h3>Flash the firmware and OS</h3>
+              <div class="callout info">
+                <span class="callout-icon">ℹ</span>
+                <span>All commands below are run from <code>~/iq9_ubuntu_images/</code>. If you extracted QDL elsewhere, replace <code>./qdl</code> with the full path to your QDL binary.</span>
+              </div>
+
+              <div class="steps">
+                <div class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Navigate to the image directory</div>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>cd ~/iq9_ubuntu_images</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Flash RTSS firmware to SPI NOR</div>
+                    <p class="step-desc">From inside <code>sail_nor/</code> subdirectory:</p>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>cd ~/iq9_ubuntu_images/sail_nor
+../qdl --storage spinor prog_firehose_ddr.elf rawprogram0.xml patch0.xml</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Flash Ubuntu OS to UFS storage</div>
+                    <p class="step-desc">Back in the main image directory:</p>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>cd ~/iq9_ubuntu_images
+./qdl --storage ufs prog_firehose_ddr.elf rawprogram*.xml patch*.xml</pre>
+                    </div>
+                    <p class="step-desc">This step takes several minutes. Wait for the QDL tool to confirm completion before proceeding.</p>
+                    <p class="step-desc">Expected output on a successful flash:</p>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">expected output</span></div>
+                      <pre>waiting for programmer...
+flashed "disk" successfully at 131400kB/s
+flashed "xbl_a" successfully
+flashed "xbl_b" successfully
+flashed "xbl_config_a" successfully
+flashed "xbl_config_b" successfully
+flashed "PrimaryGPT" successfully
+flashed "BackupGPT" successfully
+flashed "aop_a" successfully
+flashed "shrm_a" successfully
+flashed "uefi_a" successfully
+flashed "uefisecapp_a" successfully
+flashed "xbl_ramdump_a" successfully
+flashed "dtb_a" successfully at 65536kB/s
+flashed "tz_a" successfully
+flashed "hyp_a" successfully
+flashed "devcfg_a" successfully
+flashed "cpucp_a" successfully
+flashed "multiimgoem_a" successfully
+flashed "multiimgqti_a" successfully
+flashed "imagefv_a" successfully
+flashed "aop_b" successfully
+flashed "dtb_b" successfully
+flashed "imagefv_b" successfully
+flashed "shrm_b" successfully
+flashed "uefi_b" successfully
+flashed "uefisecapp_b" successfully
+flashed "xbl_ramdump_b" successfully
+flashed "tz_b" successfully
+flashed "hyp_b" successfully
+flashed "devcfg_b" successfully
+flashed "cpucp_b" successfully
+flashed "multiimgoem_b" successfully
+flashed "multiimgqti_b" successfully
+flashed "toolsfv" successfully
+flashed "PrimaryGPT" successfully
+flashed "BackupGPT" successfully
+52 patches applied
+partition 1 is now bootable</pre>
+                    </div>
+                  </div>
+                </div>
+              </div><!-- /steps -->
+
+            </div>
+          </details>
+
+          <!-- ── SECTION 5: First Boot ── -->
+          <details class="collapsible-section" id="firstboot" open>
+            <summary>
+              <span class="section-num">05</span>
+              <h2>First Boot &amp; Login</h2>
+              <span class="collapse-arrow">&#9654;</span>
+            </summary>
+            <div class="section-body">
+
+              <div class="steps">
+                <div class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Disable EDL mode</div>
+                    <p class="step-desc">Push the <strong>SW2-3</strong> DIP switch back to <strong>DOWN (OFF)</strong>.</p>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Prepare your login method</div>
+                    <p class="step-desc">Choose how you want to complete the first-time setup. Both methods go through the same login and password change flow.</p>
+                  </div>
+                </div>
+              </div>
+
+              <h3>Via Debug UART (Server or Desktop)</h3>
+              <div class="steps">
+                <div class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Connect the Debug UART console</div>
+                    <p class="step-desc">Connect the <strong>Micro-USB cable</strong> to the Debug UART port on the EVK and to your host computer. Open a serial terminal (as in <a href="#verify">Step 2</a>):</p>
+                    <div class="code-block">
+                      <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
+                      <pre>sudo picocom -b 115200 /dev/ttyUSB1</pre>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Power on and wait for the login prompt</div>
+                    <p class="step-desc">Connect the 12 V power supply. Watch the serial terminal — you should see the Ubuntu boot log scrolling. Wait until you see a login prompt.</p>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Log in and change the default password</div>
+                    <p class="step-desc">Enter the default credentials, then follow the password change prompts:</p>
+                    <table class="doc-table">
+                      <thead><tr><th>Prompt</th><th>Enter</th></tr></thead>
+                      <tbody>
+                        <tr><td>login:</td><td><code>ubuntu</code></td></tr>
+                        <tr><td>Password:</td><td><code>ubuntu</code></td></tr>
+                        <tr><td>Current password:</td><td><code>ubuntu</code></td></tr>
+                        <tr><td>New password:</td><td>Your new password</td></tr>
+                        <tr><td>Retype new password:</td><td>Confirm new password</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <h3>Via GUI (Desktop only)</h3>
+              <div class="steps">
+                <div class="step">
+                  <div class="step-num">1</div>
+                  <div class="step-body">
+                    <div class="step-title">Connect a display and input devices</div>
+                    <p class="step-desc">Connect a monitor to the <strong>mini-DisplayPort</strong> on the EVK using a mini-DP cable or a mini-DP to HDMI/DP adapter. Plug a USB keyboard and mouse into the USB ports.</p>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">2</div>
+                  <div class="step-body">
+                    <div class="step-title">Power on the board</div>
+                    <p class="step-desc">Connect the 12 V power supply. Ubuntu Desktop will boot directly to the graphical login screen.</p>
+                  </div>
+                </div>
+
+                <div class="step">
+                  <div class="step-num">3</div>
+                  <div class="step-body">
+                    <div class="step-title">Log in and change the default password</div>
+                    <p class="step-desc">Log in with username <code>ubuntu</code> and password <code>ubuntu</code>. The system will prompt you to set a new password before continuing.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="callout info">
+                <span class="callout-icon">ℹ</span>
+                <span>The Debug UART console continues to work alongside the GUI — you can use either or both at any time.</span>
+              </div>
+
+              <div class="callout success">
+                <span class="callout-icon">✓</span>
+                <span>
+                  <strong>Done!</strong> Ubuntu 24.04 LTS is now running on your IQ-9075 EVK.
+                </span>
+              </div>
+
+            </div>
+          </details>
+
+          <!-- ── SECTION 6: Troubleshooting / FAQ ── -->
+          <details class="collapsible-section" id="faq">
+            <summary>
+              <span class="section-num">06</span>
+              <h2>Troubleshooting &amp; FAQ</h2>
+              <span class="collapse-arrow">&#9654;</span>
+            </summary>
+            <div class="section-body">
+
+              <h3>QDL device not detected after entering EDL mode</h3>
+              <p>If <code>lsusb</code> does not show the Qualcomm QDL device (<code>05c6:9008</code>):</p>
+              <ul>
+                <li>Confirm the <strong>SW2-3</strong> DIP switch is in the <strong>UP (ON)</strong> position.</li>
+                <li>Make sure you are using the <strong>USB0</strong> port, not USB1.</li>
+                <li>Try a different USB cable or a different USB port on your host.</li>
+                <li>Power-cycle the board: disconnect 12 V, wait 5 seconds, reconnect.</li>
+              </ul>
+
+              <h3>QDL flashing fails or hangs</h3>
+              <ul>
+                <li>Ensure the udev rule is in place and udev has been reloaded (<code>sudo systemctl restart udev</code>).</li>
+                <li>Disconnect and reconnect the USB cable after reloading udev.</li>
+                <li>Check that all required files are in <code>~/iq9_ubuntu_images/</code> — see the expected directory listing in Step 1.</li>
+              </ul>
+
+              <h3>No output on Debug UART</h3>
+              <ul>
+                <li>Verify the Micro-USB cable is connected to the <strong>Debug UART</strong> port (not USB0/USB1/USB2).</li>
+                <li>Try the other <code>/dev/ttyUSB*</code> port — the debug port is typically the higher-numbered one.</li>
+                <li>Confirm the baud rate is set to <strong>115200</strong>.</li>
+              </ul>
+
+              <h3>Board boots but login prompt never appears</h3>
+              <ul>
+                <li>The first boot after flashing can take several minutes. Wait at least 3–5 minutes before concluding it has stalled.</li>
+                <li>Press Enter a few times to see if login prompt appears</li>
+                <li>If the boot log shows errors, try re-flashing the image from scratch.</li>
+              </ul>
+
+              <h3>Password change fails or loops</h3>
+              <ul>
+                <li>The new password must meet Ubuntu's default complexity requirements (typically 8+ characters).</li>
+                <li>If it keeps rejecting, try a longer password with mixed characters.</li>
+              </ul>
+
+              <h3>Desktop boots to a black screen</h3>
+              <ul>
+                <li>Verify the mini-DP cable or adapter is firmly connected.</li>
+                <li>Try a different monitor or adapter — some mini-DP to HDMI adapters are not compatible.</li>
+                <li>The Debug UART console will still work — use it to verify the system has booted and troubleshoot from there.</li>
+              </ul>
+
+            </div>
+          </details>
+
+      <div class="bottom-nav">
+        <a class="bottom-nav-link prev" href="index.html">← <span class="nav-label">Flashing</span></a>
+        <a class="bottom-nav-link scroll-top" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">↑ Top</a>
+        <a class="bottom-nav-link next" href="../../iq10/index.html"><span class="nav-label">IQ-10</span> →</a>
+      </div>
+
+    </main>
+
+    <!-- Right TOC -->
+    <aside class="page-toc">
+      <div class="page-toc-label">On This Page</div>
+      <ul class="page-toc-list">
+        <li><a href="#dl">01 — Download &amp; Prepare</a></li>
+        <li><a href="#verify">02 — Verify Hardware</a></li>
+        <li><a href="#edl">03 — EDL Mode</a></li>
+        <li><a href="#flash">04 — Flash</a></li>
+        <li><a href="#firstboot">05 — First Boot</a></li>
+        <li><a href="#faq">06 — Troubleshooting</a></li>
+      </ul>
+    </aside>
+  </div>
+</div>
+
+<footer class="page-footer">
+  <p>Qualcomm Dragonwing™ Developer Documentation &nbsp;·&nbsp; IQ-9075 / Flashing / Ubuntu 24.04</p>
+</footer>
+
+<script>
+  window.DOCS_ROOT    = '../..';
+  window.DOCS_NAV_KEY = 'iq9-flash-ubuntu';
+</script>
+<script src="../../assets/js/nav.js"></script>
+</body>
+</html>
