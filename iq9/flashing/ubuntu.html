@@ -127,7 +127,7 @@
               <h3>QDL Flashing Tool</h3>
               <p>Download the Qualcomm Device Loader (QDL) tool:</p>
               <a class="dl-link" href="https://softwarecenter.qualcomm.com/catalog/item/Qualcomm_Device_Loader?osArch=X86&osDist=Debian&osType=Linux&version=2.3.9" target="_blank">
-                ↓ Qualcomm Software Center — QDL v2.3.9 (Linux x86)
+                ↓ Qualcomm Software Center — QDL
               </a>
               <div class="callout info">
                 <span class="callout-icon">ℹ</span>
@@ -153,10 +153,12 @@ cd ~/iq9_ubuntu_images</pre>
                   <div class="step-num">2</div>
                   <div class="step-body">
                     <div class="step-title">Extract and copy boot firmware</div>
-                    <p class="step-desc">Extract the NHLOS archive into <code>iq9_ubuntu_images</code>:</p>
+                    <p class="step-desc">Extract the NHLOS archive, then move its contents into <code>iq9_ubuntu_images</code>:</p>
                     <div class="code-block">
                       <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
-                      <pre>tar -xzf ~/Downloads/QLI.1.6-Ver.1.1-ubuntu-QCS9100-nhlos-bins.tar.gz -C ~/iq9_ubuntu_images</pre>
+                      <pre>tar -xzf ~/Downloads/QLI.1.6-Ver.1.1-ubuntu-QCS9100-nhlos-bins.tar.gz -C ~/iq9_ubuntu_images
+mv ~/iq9_ubuntu_images/QLI.1.6-Ver.1.1-ubuntu-QCS9100-nhlos-bins/* ~/iq9_ubuntu_images/
+rm -r ~/iq9_ubuntu_images/QLI.1.6-Ver.1.1-ubuntu-QCS9100-nhlos-bins</pre>
                     </div>
                     <div class="callout warn">
                       <span class="callout-icon">⚠</span>
@@ -207,10 +209,13 @@ cp ~/Downloads/iot-qualcomm-dragonwing-classic-desktop-2404-x08-20260210.4096b.i
                   <div class="step-num">5</div>
                   <div class="step-body">
                     <div class="step-title">Extract QDL into the same directory</div>
+                    <p class="step-desc">Unzip the QDL archive, then move its contents into <code>iq9_ubuntu_images</code>:</p>
                     <div class="code-block">
                       <div class="code-header"><span class="code-lang">bash</span><button class="copy-btn">copy</button></div>
                       <pre>cd ~/iq9_ubuntu_images
-unzip ~/Downloads/qdl-linux-x86-2.3.9.zip
+unzip ~/Downloads/QDL_2.5_Linux_x64.zip
+mv QDL_2.5_Linux_x64/* .
+rm -r QDL_2.5_Linux_x64
 chmod +x qdl</pre>
                     </div>
                   </div>

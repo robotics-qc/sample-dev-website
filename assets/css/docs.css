@@ -175,12 +175,62 @@ a:hover { text-decoration: underline; }
   bottom: 0;
   left: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   background: var(--surface);
   border-right: 1px solid var(--border);
   padding: 24px 0 40px;
   z-index: 100;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
+  transition: width 0.2s ease;
+}
+
+.sidebar.minimized {
+  width: 0 !important;
+  padding: 0;
+  border-right: none;
+  overflow: hidden;
+}
+
+/* Drag handle — right edge of sidebar */
+.sidebar-resize-handle {
+  position: fixed;
+  top: var(--topnav-h);
+  bottom: 0;
+  width: 8px;
+  margin-left: -4px;
+  cursor: col-resize;
+  z-index: 101;
+  background: transparent;
+}
+
+.sidebar-resize-handle:hover,
+.sidebar-resize-handle.dragging {
+  background: var(--accent-bright);
+  opacity: 0.35;
+}
+
+.sidebar-resize-handle::after {
+  content: '⋮';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 3px;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.sidebar-resize-handle:hover::after,
+.sidebar-resize-handle.dragging::after {
+  opacity: 1;
 }
 
 .sidebar::-webkit-scrollbar { width: 3px; }
@@ -316,6 +366,54 @@ a:hover { text-decoration: underline; }
   top: calc(var(--topnav-h) + 20px);
   align-self: flex-start;
   padding: clamp(24px, 4vw, 48px) 16px 0 4px;
+  transition: width 0.2s ease, padding 0.2s ease;
+  overflow: hidden;
+}
+
+.page-toc.minimized {
+  width: 0 !important;
+  padding-left: 0;
+  padding-right: 0;
+  overflow: hidden;
+}
+
+/* Drag handle — left edge of TOC */
+.toc-resize-handle {
+  position: fixed;
+  width: 8px;
+  margin-left: -4px;
+  cursor: col-resize;
+  z-index: 10;
+  background: transparent;
+}
+
+.toc-resize-handle:hover,
+.toc-resize-handle.dragging {
+  background: var(--accent-bright);
+  opacity: 0.35;
+}
+
+.toc-resize-handle::after {
+  content: '⋮';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 14px;
+  color: var(--text-muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 3px;
+  line-height: 1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.toc-resize-handle:hover::after,
+.toc-resize-handle.dragging::after {
+  opacity: 1;
 }
 
 .page-toc-label {
@@ -1302,27 +1400,28 @@ pre code {
 .dl-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10px;
-  color: #0f766e;
-  background: rgba(13,148,136,0.1);
-  border: 1px solid rgba(13,148,136,0.3);
-  padding: 4px 10px;
-  border-radius: 4px;
+  gap: 6px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  background: #0d9488;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 20px;
   text-decoration: none;
   transition: all 0.15s;
   margin: 4px 0;
-  font-weight: 500;
-  letter-spacing: 0.02em;
   cursor: pointer;
+  box-shadow: 0 1px 3px rgba(13,148,136,0.3);
 }
 
 .dl-link:hover {
-  background: rgba(13,148,136,0.18);
-  border-color: #0d9488;
-  color: #115e59;
+  background: #0f766e;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(13,148,136,0.4);
   text-decoration: none;
+  transform: translateY(-1px);
 }
 
 /* ═══════════════════════════════════════════════
@@ -1460,16 +1559,25 @@ pre code {
 
 /* ═══════════════════════════════════════════════
    RESPONSIVE
+   Note: zoom:1.5 means CSS px breakpoints fire at
+   1.5× the actual viewport width. These values are
+   tuned for that.
    ═══════════════════════════════════════════════ */
-@media (max-width: 1280px) {
-  :root { --toc-w: 160px; }
+
+/* Shrink right TOC first */
+@media (max-width: 900px) {
+  :root { --toc-w: 140px; }
 }
 
-@media (max-width: 1100px) {
-  .page-toc { display: none; }
+/* Hide right TOC, reclaim space */
+@media (max-width: 760px) {
+  .page-toc {
+    display: none;
+  }
 }
 
-@media (max-width: 860px) {
+/* Collapse left sidebar into hamburger overlay */
+@media (max-width: 620px) {
   :root { --sidebar-w: 0px; }
 
   .sidebar {
@@ -1490,7 +1598,9 @@ pre code {
   .topnav-sep { display: none; }
 }
 
-@media (max-width: 500px) {
+/* Stack grids on narrow screens */
+@media (max-width: 400px) {
   .kit-grid, .hub-grid, .os-grid { grid-template-columns: 1fr; }
   .meta-row { gap: 12px; }
+  .bottom-nav { flex-wrap: wrap; justify-content: center; }
 }

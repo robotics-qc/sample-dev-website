@@ -15,18 +15,6 @@ const NAV_TREE = [
     key: 'home',
   },
   {
-    sectionLabel: 'IQ-7',
-    items: [
-      { label: 'Overview', href: '#', key: 'iq7-overview', badge: 'coming' },
-    ],
-  },
-  {
-    sectionLabel: 'IQ-8',
-    items: [
-      { label: 'Overview', href: '#', key: 'iq8-overview', badge: 'coming' },
-    ],
-  },
-  {
     sectionLabel: 'IQ-9075',
     items: [
       { label: 'Overview',   href: 'iq9/index.html',            key: 'iq9-overview' },
@@ -247,6 +235,169 @@ function initExpandCollapse() {
   });
 }
 
+// ── Draggable panel resize with snap-to-minimize ─
+// CSS zoom on <html> means:
+//   - e.clientX / e.clientY are in screen pixels (unzoomed)
+//   - getBoundingClientRect() returns screen pixels (unzoomed)
+//   - CSS "left", "width" etc on position:fixed are in CSS (zoomed) units
+// So: to set a fixed element's CSS left from e.clientX, divide by zoom.
+// To set a CSS width variable, divide by zoom.
+
+function initPanelResize() {
+  const root = document.documentElement;
+  const sidebar = document.getElementById('sidebar');
+
+  function getZoom() {
+    return parseFloat(getComputedStyle(root).zoom) || 1;
+  }
+
+  function setVar(name, cssPx) {
+    root.style.setProperty(name, Math.round(cssPx) + 'px');
+  }
+
+  // ── Left sidebar ──
+  if (sidebar) {
+    const handle = document.createElement('div');
+    handle.className = 'sidebar-resize-handle';
+    document.body.appendChild(handle);
+    let dragging = false;
+
+    function positionSidebarHandle() {
+      // sidebar width in CSS px is --sidebar-w; handle left = that value
+      const w = parseInt(getComputedStyle(root).getPropertyValue('--sidebar-w')) || 0;
+      handle.style.left = w + 'px';
+    }
+
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault();
+      dragging = true;
+      handle.classList.add('dragging');
+      sidebar.style.transition = 'none';
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      const z = getZoom();
+      const cssPx = e.clientX / z;  // convert screen px to CSS px
+
+      if (cssPx < 50) {
+        sidebar.classList.add('minimized');
+        setVar('--sidebar-w', 0);
+        sidebar.style.width = '0px';
+      } else {
+        sidebar.classList.remove('minimized');
+        const clamped = Math.min(400, Math.max(160, cssPx));
+        setVar('--sidebar-w', clamped);
+        sidebar.style.width = Math.round(clamped) + 'px';
+      }
+      // Handle position in CSS px
+      handle.style.left = Math.round(cssPx) + 'px';
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging = false;
+      handle.classList.remove('dragging');
+      sidebar.style.transition = '';
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      positionSidebarHandle();
+    });
+
+    handle.addEventListener('dblclick', () => {
+      if (sidebar.classList.contains('minimized')) {
+        sidebar.classList.remove('minimized');
+        setVar('--sidebar-w', 248);
+        sidebar.style.width = '248px';
+      } else {
+        sidebar.classList.add('minimized');
+        setVar('--sidebar-w', 0);
+        sidebar.style.width = '0px';
+      }
+      setTimeout(positionSidebarHandle, 250);
+    });
+
+    positionSidebarHandle();
+    window.addEventListener('resize', positionSidebarHandle);
+  }
+
+  // ── Right TOC ──
+  const toc = document.querySelector('.page-toc');
+  if (toc) {
+    const handle = document.createElement('div');
+    handle.className = 'toc-resize-handle';
+    document.body.appendChild(handle);
+    let dragging = false;
+
+    function positionTocHandle() {
+      const rect = toc.getBoundingClientRect();
+      const z = getZoom();
+      // rect.left is in screen px; convert to CSS px for position:fixed
+      handle.style.left = Math.round(rect.left / z) + 'px';
+      handle.style.top = Math.round(rect.top / z) + 'px';
+      handle.style.height = Math.round(rect.height / z) + 'px';
+    }
+
+    handle.addEventListener('mousedown', e => {
+      e.preventDefault();
+      dragging = true;
+      handle.classList.add('dragging');
+      toc.style.transition = 'none';
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+    });
+
+    window.addEventListener('mousemove', e => {
+      if (!dragging) return;
+      const z = getZoom();
+      const viewportCssPx = window.innerWidth / z;
+      const mouseCssPx = e.clientX / z;
+      const fromRight = viewportCssPx - mouseCssPx;
+
+      if (fromRight < 20) {
+        toc.classList.add('minimized');
+        setVar('--toc-w', 0);
+        toc.style.width = '0px';
+      } else {
+        toc.classList.remove('minimized');
+        const clamped = Math.min(320, Math.max(120, fromRight));
+        setVar('--toc-w', clamped);
+        toc.style.width = Math.round(clamped) + 'px';
+      }
+      handle.style.left = Math.round(mouseCssPx) + 'px';
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (!dragging) return;
+      dragging = false;
+      handle.classList.remove('dragging');
+      toc.style.transition = '';
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      positionTocHandle();
+    });
+
+    handle.addEventListener('dblclick', () => {
+      if (toc.classList.contains('minimized')) {
+        toc.classList.remove('minimized');
+        setVar('--toc-w', 188);
+        toc.style.width = '188px';
+      } else {
+        toc.classList.add('minimized');
+        setVar('--toc-w', 0);
+        toc.style.width = '0px';
+      }
+      setTimeout(positionTocHandle, 250);
+    });
+
+    setTimeout(positionTocHandle, 100);
+    window.addEventListener('resize', positionTocHandle);
+    window.addEventListener('scroll', positionTocHandle);
+  }
+}
+
 // ── Init ─────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   initNav();
@@ -254,4 +405,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initTabs();
   initTocHighlight();
   initExpandCollapse();
+  initPanelResize();
 });
